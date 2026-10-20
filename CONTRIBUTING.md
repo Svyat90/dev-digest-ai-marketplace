@@ -47,6 +47,7 @@ claude plugin validate . --strict                        # marketplace
 for d in plugins/*/; do claude plugin validate "$d" --strict; done
 node scripts/check-plugins.mjs --base origin/main         # team rules + version bump
 node scripts/build-index.mjs --cost                       # site index + context cost
+node scripts/test-site-search.mjs                         # canonical site search queries
 ```
 
 Then check by hand:

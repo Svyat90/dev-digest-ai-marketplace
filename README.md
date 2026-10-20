@@ -31,7 +31,7 @@ No GitHub SSH key? Set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`, otherwise installs f
 | [research-tools](plugins/research-tools) | Technical research with cited sources |
 | [sdd-engineering](plugins/sdd-engineering) | Spec-driven development: spec → plan → tasks |
 
-The searchable catalog is published on GitHub Pages (see [docs/SITE-SPEC.md](docs/SITE-SPEC.md)).
+Search every skill, agent and hook on [Artifact Search](https://svyat90.github.io/dev-digest-ai-marketplace/artifact-search/) (GitHub Pages; see [docs/SITE-SPEC.md](docs/SITE-SPEC.md)).
 
 ## Enable the marketplace in a project repository
 
@@ -57,7 +57,7 @@ To give everyone who opens a project repository the marketplace and the right pl
 plugins/<name>/                   plugin sources (one directory = one plugin)
 docs/                             rules: structure, security, releases, site, cost
 scripts/                          checks, release/rollback, site index build
-site/                             static catalog site
+site/artifact-search/             Artifact Search site (GitHub Pages)
 .github/workflows/                CI: validate.yml (checks + tags), pages.yml (site)
 ```
 

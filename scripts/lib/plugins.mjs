@@ -65,14 +65,22 @@ export function listComponents(dir) {
     }
   }
   if (existsSync(join(dir, 'hooks', 'hooks.json'))) {
-    const hooks = readJson(join(dir, 'hooks', 'hooks.json')).hooks ?? {};
-    for (const event of Object.keys(hooks)) {
-      components.push({ type: 'hook', file: join(dir, 'hooks', 'hooks.json'), data: { name: event }, body: '' });
+    const file = join(dir, 'hooks', 'hooks.json');
+    const hooks = readJson(file).hooks ?? {};
+    for (const [event, groups] of Object.entries(hooks)) {
+      // A hook has no description; its matchers and commands are its searchable content.
+      const body = groups.map((g) => [
+        g.matcher ? `matcher: ${g.matcher}` : null,
+        ...(g.hooks ?? []).map((h) => h.command ?? h.url ?? h.prompt ?? ''),
+      ].filter(Boolean).join('\n')).join('\n');
+      components.push({ type: 'hook', file, data: { name: event }, body });
     }
   }
   if (existsSync(join(dir, '.mcp.json'))) {
-    for (const name of Object.keys(readJson(join(dir, '.mcp.json')).mcpServers ?? {})) {
-      components.push({ type: 'mcp', file: join(dir, '.mcp.json'), data: { name }, body: '' });
+    const file = join(dir, '.mcp.json');
+    for (const [name, cfg] of Object.entries(readJson(file).mcpServers ?? {})) {
+      const body = [cfg.command, ...(cfg.args ?? []), cfg.url].filter(Boolean).join(' ');
+      components.push({ type: 'mcp', file, data: { name }, body });
     }
   }
   return components;

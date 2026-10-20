@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Artifact Search · DevDigest AI Marketplace</title>
+  <meta name="description" content="Search the skills, agents, commands, hooks and MCP servers of the DevDigest AI marketplace.">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" type="module"></script>
+</head>
+<body>
+<div data-app>
+  <header class="top">
+    <div class="wrap top-inner">
+      <div class="intro-row">
+        <div class="intro">
+          <h1 id="title">dev-digest-ai-marketplace</h1>
+          <p id="subtitle">Search the skills, agents, commands, hooks and MCP servers of this marketplace.</p>
+        </div>
+        <div class="add">
+          <span class="add-label">Add this marketplace in Claude Code</span>
+          <div class="cmd">
+            <code id="add-cmd">/plugin marketplace add Svyat90/dev-digest-ai-marketplace</code>
+            <button type="button" id="add-copy" aria-label="Copy the add marketplace command">Copy</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label for="artifact-q" class="visually-hidden">Search artifacts</label>
+        <input id="artifact-q" type="search" placeholder="Describe what you need, e.g. review an ADR"
+               autocomplete="off" spellcheck="false">
+      </div>
+      <div id="pills" class="pills" role="group" aria-label="Filter by artifact type"></div>
+    </div>
+  </header>
+
+  <main class="wrap results">
+    <p id="loading" class="muted" role="status">Loading catalog…</p>
+
+    <div id="error" class="error" role="alert" hidden>
+      <p class="error-title">Could not load the catalog</p>
+      <p class="muted">The search index didn’t load. You can still browse the plugins in the repository.</p>
+      <a id="repo-link" href="https://github.com/Svyat90/dev-digest-ai-marketplace">Open the repository on GitHub ↗</a>
+    </div>
+
+    <div id="ready" hidden>
+      <p id="count" class="count" aria-live="polite"></p>
+      <div id="grid" class="grid"></div>
+      <div id="empty" class="empty" hidden>
+        <p class="empty-title">No artifacts match</p>
+        <p id="empty-detail" class="muted"></p>
+        <button type="button" id="clear" class="primary">Clear search</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bottom">
+    <div class="wrap bottom-inner">
+      <span>Index built from <a id="commit-link" class="mono" href="https://github.com/Svyat90/dev-digest-ai-marketplace/tree/main">main</a></span>
+      <a id="contributing-link" href="https://github.com/Svyat90/dev-digest-ai-marketplace/blob/main/CONTRIBUTING.md">Contributing guide</a>
+    </div>
+  </footer>
+</div>
+
+<template id="card-tpl">
+  <article class="card">
+    <div class="card-head">
+      <span class="type"></span>
+      <span class="cost" title="Context cost of installing this plugin's component"></span>
+    </div>
+    <div class="card-title">
+      <h2 class="name"></h2>
+      <span class="plugin"></span>
+    </div>
+    <p class="desc"></p>
+    <span class="content-only" hidden>Matched in file content</span>
+    <div class="card-foot">
+      <div class="cmd">
+        <code class="install"></code>
+        <button type="button" class="copy">Copy</button>
+      </div>
+      <a class="source" target="_blank" rel="noopener">Source ↗</a>
+    </div>
+  </article>
+</template>
+</body>
+</html>

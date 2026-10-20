@@ -58,6 +58,9 @@ jobs:
       - name: Build site index
         run: node scripts/build-index.mjs --cost >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Site search acceptance test
+        run: node scripts/test-site-search.mjs
+
   tag:
     # After merge to main, create a <plugin>--v<version> tag for every version that has none yet.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
