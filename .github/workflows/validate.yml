@@ -28,6 +28,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
 
       - name: Install Claude Code CLI
         run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
@@ -53,13 +55,26 @@ jobs:
 
       - name: Syntax-check scripts
         run: |
-          for f in $(git ls-files '*.mjs' '*.js'); do node --check "$f"; done
+          for f in $(git ls-files 'scripts/*.mjs' 'plugins/*.mjs' 'plugins/*.js'); do node --check "$f"; done
 
       - name: Build site index
         run: node scripts/build-index.mjs --cost >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Site search acceptance test
-        run: node scripts/test-site-search.mjs
+      - name: Content translations report
+        # Informational: missing or stale translations never fail the build.
+        run: node scripts/i18n-todo.mjs uk >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Site tests (search acceptance, data, locales)
+        working-directory: site
+        run: npm test
+
+      - name: Site build
+        working-directory: site
+        run: npm run build
 
   tag:
     # After merge to main, create a <plugin>--v<version> tag for every version that has none yet.

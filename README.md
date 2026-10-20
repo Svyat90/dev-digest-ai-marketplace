@@ -31,7 +31,20 @@ No GitHub SSH key? Set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`, otherwise installs f
 | [research-tools](plugins/research-tools) | Read-only researcher agent for the codebase and the web, with cited sources |
 | [sdd-engineering](plugins/sdd-engineering) | Spec-driven development: spec → plan → parallel implementation → verification → retro. Depends on engineering-paved-path, research-tools and architecture-review |
 
-Search every skill, agent and hook on [Artifact Search](https://svyat90.github.io/dev-digest-ai-marketplace/artifact-search/) (GitHub Pages; see [docs/SITE-SPEC.md](docs/SITE-SPEC.md)).
+Browse every plugin, skill, agent and hook in the [catalog](https://svyat90.github.io/dev-digest-ai-marketplace/) (GitHub Pages, English and Ukrainian; see [docs/SITE-SPEC.md](docs/SITE-SPEC.md)). Old `artifact-search/?q=…` links redirect to its search.
+
+### Run the catalog locally
+
+Node 20.19 or later.
+
+```bash
+npm run build:index                              # repo root: writes site/public/ (index, releases, stats, bodies)
+cd site && npm ci && npm run dev                 # http://localhost:5173 with hot reload
+npm run build && npm run preview                 # production build in site/dist
+npm test                                         # Vitest: search acceptance, data parsing, locale keys
+```
+
+Re-run `npm run build:index` after changing a plugin; the dev server picks up the new files on reload. `npm run i18n:todo -- uk` (repo root) lists plugin and component descriptions whose Ukrainian translation in `site/i18n/content/uk.json` is missing or stale.
 
 ## Enable the marketplace in a project repository
 
@@ -56,9 +69,9 @@ To give everyone who opens a project repository the marketplace and the right pl
 .claude-plugin/marketplace.json   plugin catalog
 plugins/<name>/                   plugin sources (one directory = one plugin)
 docs/                             rules: structure, security, releases, site, cost
-scripts/                          checks, release/rollback, site index build, local site server
-site/artifact-search/             Artifact Search site (GitHub Pages)
-.github/workflows/                CI: validate.yml (checks + tags), pages.yml (site)
+scripts/                          checks, release/rollback, site index build, i18n report, eval report
+site/                             catalog site: React + Vite app (GitHub Pages), its own package.json
+.github/workflows/                CI: validate.yml (checks, site tests and build, tags), pages.yml (site deploy)
 ```
 
 ## Documentation

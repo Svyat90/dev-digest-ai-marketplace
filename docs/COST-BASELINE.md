@@ -9,7 +9,7 @@ How much context each plugin costs. Context is money and quality: the more descr
 | **Idle** | sum of the `description` of every skill/agent/command in the plugin | in **every** session while the plugin is enabled |
 | **Invoked** | sum of the bodies of all components | only when a component is invoked |
 
-`node scripts/build-index.mjs --cost` computes the estimate (≈ 4 characters per token). It is an approximation for comparing versions, not exact billing. For the exact value in a session, use `/context`.
+`npm run build:index -- --cost` (or `node scripts/build-index.mjs --cost`) computes the estimate (≈ 4 characters per token). It is an approximation for comparing versions, not exact billing. For the exact value in a session, use `/context`.
 
 ## Budget
 
@@ -46,8 +46,13 @@ CI adds the current table to the summary of every `validate` run.
 
 ## How to update
 
+From the repository root:
+
 ```bash
-node scripts/build-index.mjs --cost
+npm run build:index -- --cost
 ```
 
-Paste the output into the table above and update the date.
+It writes the site data to `site/public/` and prints the table above to stdout
+(progress goes to stderr, so `npm run --silent build:index -- --cost > table.md`
+captures only the table). Paste it above, add the **Total** row, update the date.
+CI appends the same table to the summary of every `validate` run.
