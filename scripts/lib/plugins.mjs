@@ -2,7 +2,7 @@
 // No dependencies: runs on plain Node >= 20.
 
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { join, relative, resolve } from 'node:path';
+import { basename, join, relative, resolve } from 'node:path';
 
 export const ROOT = resolve(import.meta.dirname, '..', '..');
 
@@ -28,6 +28,8 @@ export function walk(dir) {
   for (const name of readdirSync(dir)) {
     if (name === '.git' || name === 'node_modules') continue;
     const full = join(dir, name);
+    // `claude plugin eval` output: local, git-ignored, holds absolute paths.
+    if (name === 'results' && basename(dir) === 'evals') continue;
     if (statSync(full).isDirectory()) out.push(...walk(full));
     else out.push(full);
   }
@@ -47,7 +49,22 @@ export function readFrontmatter(path) {
   return { data, body: text.slice(match[0].length) };
 }
 
-// Lists skills, agents and commands from their default locations.
+// Agent and command files are Markdown with frontmatter. A .md file without one
+// (a README next to the agents) is not a component: Claude Code does not load it,
+// so the catalog does not list it either.
+export function strayMarkdown(dir) {
+  const out = [];
+  for (const type of ['agents', 'commands']) {
+    const typeDir = join(dir, type);
+    if (!existsSync(typeDir)) continue;
+    for (const file of walk(typeDir).filter((f) => f.endsWith('.md'))) {
+      if (!readFrontmatter(file).data) out.push(file);
+    }
+  }
+  return out;
+}
+
+// Lists skills, agents, commands, hooks and MCP servers from their default locations.
 export function listComponents(dir) {
   const components = [];
   const skillsDir = join(dir, 'skills');
@@ -61,19 +78,21 @@ export function listComponents(dir) {
     const typeDir = join(dir, type);
     if (!existsSync(typeDir)) continue;
     for (const file of walk(typeDir).filter((f) => f.endsWith('.md'))) {
-      components.push({ type: type.slice(0, -1), file, ...readFrontmatter(file) });
+      const parsed = readFrontmatter(file);
+      if (parsed.data) components.push({ type: type.slice(0, -1), file, ...parsed });
     }
   }
   if (existsSync(join(dir, 'hooks', 'hooks.json'))) {
     const file = join(dir, 'hooks', 'hooks.json');
-    const hooks = readJson(file).hooks ?? {};
+    const config = readJson(file);
+    const hooks = config.hooks ?? {};
     for (const [event, groups] of Object.entries(hooks)) {
       // A hook has no description; its matchers and commands are its searchable content.
       const body = groups.map((g) => [
         g.matcher ? `matcher: ${g.matcher}` : null,
         ...(g.hooks ?? []).map((h) => h.command ?? h.url ?? h.prompt ?? ''),
       ].filter(Boolean).join('\n')).join('\n');
-      components.push({ type: 'hook', file, data: { name: event }, body });
+      components.push({ type: 'hook', file, data: { name: event, description: config.description ?? null }, body });
     }
   }
   if (existsSync(join(dir, '.mcp.json'))) {

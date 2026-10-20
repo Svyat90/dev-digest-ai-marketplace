@@ -1,4 +1,5 @@
 {
+  "description": "Blocks git push --force to main or master before the command runs.",
   "hooks": {
     "PreToolUse": [
       {

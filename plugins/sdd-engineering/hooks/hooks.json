@@ -1,0 +1,28 @@
+{
+  "description": "Scope and lint guards for the spec-creator and implementation-planner agents. Each script acts only inside its own agent.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/spec-creator-scope.mjs", "timeout": 10 }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/implementation-planner-scope.mjs", "timeout": 10 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/spec-creator-lint.mjs", "timeout": 30 },
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/implementation-planner-lint.mjs", "timeout": 30 }
+        ]
+      }
+    ]
+  }
+}

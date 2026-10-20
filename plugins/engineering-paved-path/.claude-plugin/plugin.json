@@ -1,8 +1,8 @@
 {
   "name": "engineering-paved-path",
   "displayName": "Engineering Paved Path",
-  "version": "0.1.0",
-  "description": "The team paved path: code, commit and pull request conventions",
+  "version": "1.0.0",
+  "description": "Shared engineering skills: React, Next.js, Fastify, Drizzle, PostgreSQL, Zod and TypeScript practices, onion and frontend architecture, security, a review kit and a pre-PR self-review",
   "author": {
     "name": "DevDigest AI Platform",
     "url": "https://github.com/Svyat90"
@@ -12,7 +12,12 @@
   "license": "UNLICENSED",
   "keywords": [
     "conventions",
-    "git",
+    "architecture",
+    "react",
+    "fastify",
+    "drizzle",
+    "security",
+    "review",
     "pull-request"
   ]
 }

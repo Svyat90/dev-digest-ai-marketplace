@@ -13,23 +13,34 @@ How much context each plugin costs. Context is money and quality: the more descr
 
 ## Budget
 
-- Idle per plugin — **≤ 300 tokens**.
-- Idle for all plugins in the marketplace — **≤ 1,500 tokens**.
+- Idle per plugin — **≤ 1,500 tokens**.
+- Idle for all plugins in the marketplace — **≤ 3,500 tokens**.
 - Body of a single skill — **≤ 2,000 tokens**; beyond that, move material into supporting files that Claude reads on demand.
+
+Raised in 1.0.0 from 300 / 1,500: the SDD workflow needs four agents and the
+stack skills they cite, and their descriptions carry the trigger phrases that
+decide when Claude picks them. The new limits leave ~15% headroom over the 1.0.0
+baseline; growth past them means shortening descriptions or splitting a plugin.
 
 If a PR grows idle cost by more than 20%, update the table below and explain why in the PR.
 
 ## Baseline
 
-Updated: 2026-10-19, initial version.
+Updated: 2026-10-19, release 1.0.0 of all four plugins (SDD port, `next-best-practices`, skeleton placeholders removed).
 
 | Plugin | Version | Components | Idle tokens | Invoked tokens (all) |
 | --- | --- | --- | --- | --- |
-| architecture-review | 0.1.0 | 2 | ~82 | ~283 |
-| engineering-paved-path | 0.1.0 | 2 | ~62 | ~142 |
-| research-tools | 0.1.0 | 1 | ~55 | ~158 |
-| sdd-engineering | 0.1.0 | 2 | ~92 | ~259 |
-| **Total** | | **7** | **~291** | **~842** |
+| architecture-review | 1.0.0 | 1 | ~198 | ~1921 |
+| engineering-paved-path | 1.0.0 | 15 | ~1334 | ~32237 |
+| research-tools | 1.0.0 | 1 | ~170 | ~1463 |
+| sdd-engineering | 1.0.0 | 11 | ~1301 | ~23119 |
+| **Total** | | **28** | **~3003** | **~58740** |
+
+**Within budget.** The largest descriptions: `spec-creator` ~250,
+`frontend-ui-architecture` ~213, `run-plan` ~206, `implementation-planner` ~205,
+`onion-architecture` ~199, `architecture-reviewer` ~198 — shorten these first if
+a plugin nears its limit. Hooks and skills with `disable-model-invocation`
+(`pr-self-review`, `workflow-retro`) cost nothing idle.
 
 CI adds the current table to the summary of every `validate` run.
 

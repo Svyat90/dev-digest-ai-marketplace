@@ -1,8 +1,8 @@
 {
   "name": "research-tools",
   "displayName": "Research Tools",
-  "version": "0.1.0",
-  "description": "Structured technical research with cited sources and a recommendation",
+  "version": "1.0.0",
+  "description": "Read-only researcher agent for the codebase and the web: a structured report with cited sources and what was not found",
   "author": {
     "name": "DevDigest AI Platform",
     "url": "https://github.com/Svyat90"

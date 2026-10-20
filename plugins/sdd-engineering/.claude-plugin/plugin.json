@@ -1,8 +1,8 @@
 {
   "name": "sdd-engineering",
   "displayName": "SDD Engineering",
-  "version": "0.1.0",
-  "description": "Spec-driven development: from specification to plan and tasks",
+  "version": "1.0.0",
+  "description": "Spec-driven development workflow: spec-creator, implementation-planner, implementer and plan-verifier agents, run-plan orchestration and workflow retros",
   "author": {
     "name": "DevDigest AI Platform",
     "url": "https://github.com/Svyat90"
@@ -13,6 +13,22 @@
   "keywords": [
     "spec",
     "planning",
-    "sdd"
+    "sdd",
+    "agents",
+    "workflow"
+  ],
+  "dependencies": [
+    {
+      "name": "engineering-paved-path",
+      "version": "^1.0.0"
+    },
+    {
+      "name": "research-tools",
+      "version": "^1.0.0"
+    },
+    {
+      "name": "architecture-review",
+      "version": "^1.0.0"
+    }
   ]
 }

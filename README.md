@@ -26,10 +26,10 @@ No GitHub SSH key? Set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`, otherwise installs f
 
 | Plugin | Purpose |
 | --- | --- |
-| [architecture-review](plugins/architecture-review) | Review ADRs and design documents |
-| [engineering-paved-path](plugins/engineering-paved-path) | Code, commit and PR conventions; force-push guard |
-| [research-tools](plugins/research-tools) | Technical research with cited sources |
-| [sdd-engineering](plugins/sdd-engineering) | Spec-driven development: spec → plan → tasks |
+| [architecture-review](plugins/architecture-review) | Read-only architecture review of a change. Depends on engineering-paved-path |
+| [engineering-paved-path](plugins/engineering-paved-path) | Shared stack, architecture and security skills; review kit and pre-PR self-review; force-push guard |
+| [research-tools](plugins/research-tools) | Read-only researcher agent for the codebase and the web, with cited sources |
+| [sdd-engineering](plugins/sdd-engineering) | Spec-driven development: spec → plan → parallel implementation → verification → retro. Depends on engineering-paved-path, research-tools and architecture-review |
 
 Search every skill, agent and hook on [Artifact Search](https://svyat90.github.io/dev-digest-ai-marketplace/artifact-search/) (GitHub Pages; see [docs/SITE-SPEC.md](docs/SITE-SPEC.md)).
 
@@ -56,7 +56,7 @@ To give everyone who opens a project repository the marketplace and the right pl
 .claude-plugin/marketplace.json   plugin catalog
 plugins/<name>/                   plugin sources (one directory = one plugin)
 docs/                             rules: structure, security, releases, site, cost
-scripts/                          checks, release/rollback, site index build
+scripts/                          checks, release/rollback, site index build, local site server
 site/artifact-search/             Artifact Search site (GitHub Pages)
 .github/workflows/                CI: validate.yml (checks + tags), pages.yml (site)
 ```
