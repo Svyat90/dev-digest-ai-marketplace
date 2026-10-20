@@ -36,19 +36,42 @@ Claude Code updates a user's copy of a plugin **only when `version` in `plugin.j
 
 ## Tags
 
-After a merge to `main`, CI (`validate.yml`, job `tag`) creates an annotated tag for every new version:
+After a merge to `main`, CI (`validate.yml`, job `tag`) runs `claude plugin tag` for every plugin whose current version has no tag yet:
 
 ```
-<plugin>--v<version>      e.g. sdd-engineering--v0.2.0
+<plugin>--v<version>      e.g. sdd-engineering--v1.0.0
 ```
 
-This is the format Claude Code uses to resolve version ranges in `dependencies` ([Plugin dependencies](https://code.claude.com/docs/en/plugins/dependencies)), and the format `scripts/rollback.mjs` restores from. Never create or move tags by hand.
+`claude plugin tag plugins/<name> --push` checks that `plugin.json` and the plugin's `marketplace.json` entry agree and that the tree is clean, then creates an annotated tag at `HEAD` and pushes it. This is the format Claude Code uses to resolve version ranges in `dependencies` ([Plugin dependencies](https://code.claude.com/docs/en/plugins/dependencies)), the ref a project pins to [return to a stable release](#return-a-project-to-a-stable-release), and the format `scripts/rollback.mjs` restores from. Never create or move tags by hand. Record each release in [RELEASE-EVIDENCE.md](RELEASE-EVIDENCE.md).
+
+To preview locally: `claude plugin tag plugins/<name> --dry-run`.
+
+## Install in another project
+
+To share the plugins with everyone who works in a project, install them at **project** scope from that project's root. Both commands write to the project's `.claude/settings.json`, which you commit:
+
+```bash
+cd /path/to/project
+claude plugin marketplace add Svyat90/dev-digest-ai-marketplace --scope project
+claude plugin install sdd-engineering@dev-digest-ai-marketplace --scope project
+```
+
+`sdd-engineering` pulls in its dependencies (`engineering-paved-path`, `research-tools`, `architecture-review`, each `^1.0.0`); `claude plugin list` shows them. In an open session run `/reload-plugins`. Check with `claude plugin list --json` (scope `project`) and, inside a session, by dispatching `sdd-engineering:spec-creator` or running `/sdd-engineering:run-plan`.
+
+If the project has its own copies of the same agents or skills in `.claude/agents/` or `.claude/skills/`, remove them in a separate branch first: project files and plugin components with the same name are easy to confuse, and the plugin versions are namespaced (`sdd-engineering:spec-creator`), so nothing in the project should depend on the unprefixed copies.
 
 ## How an update reaches users
 
 1. PR with a version bump → review → merge.
 2. Users **with auto-update**: in their next interactive session (random delay of up to 10 minutes after the first message) Claude Code updates the plugin and shows `Plugin updated … Run /reload-plugins`.
-3. Users **without** auto-update: `claude plugin update <name>@dev-digest-ai-marketplace` or `/plugin marketplace update dev-digest-ai-marketplace`.
+3. Users **without** auto-update update in two separate steps:
+
+   ```bash
+   claude plugin marketplace update dev-digest-ai-marketplace          # 1. refresh the catalog
+   claude plugin update sdd-engineering@dev-digest-ai-marketplace      # 2. update one installed plugin
+   ```
+
+   **Catalog update** (`marketplace update`) re-reads `marketplace.json` and the plugin manifests from the marketplace source: which plugins exist and which version each is at. It changes no installed plugin. **Plugin update** (`plugin update`) moves one installed plugin to the newest version the catalog lists, with its dependencies; add `--scope project` for a project install. Claude Code updates a plugin only when its `version` changed. Then `/reload-plugins` in open sessions.
 
 Auto-update is **off by default** for this marketplace — remind people to turn it on (see README). For an organization, an admin can set `"autoUpdate": true` on the `extraKnownMarketplaces` entry in managed settings.
 
@@ -96,6 +119,44 @@ Review `git status`, commit, open a PR, fast review, merge. If the release is da
 
 A user who needs to back out immediately, before the merge: `claude plugin disable <name>@dev-digest-ai-marketplace`.
 
+## Return a project to a stable release
+
+When a new release misbehaves in a project and the fix is not merged yet, pin the project to the last good release. Claude Code has no rollback command; a marketplace added at a tag serves the catalog as it was at that commit. From the project root:
+
+```bash
+# 1. Remove the marketplace that follows main (from this project's scope).
+claude plugin marketplace remove dev-digest-ai-marketplace --scope project
+
+# 2. Add it pinned to the release tag. The catalog keeps its name, so
+#    plugin ids stay <plugin>@dev-digest-ai-marketplace.
+claude plugin marketplace add "Svyat90/dev-digest-ai-marketplace#sdd-engineering--v1.0.0" --scope project
+
+# 3. Install the plugin from the pinned catalog (dependencies resolve to their tags too).
+claude plugin install sdd-engineering@dev-digest-ai-marketplace --scope project
+```
+
+4. In every open session: `/reload-plugins`.
+5. Smoke eval of the same tag (cheap: one case, one run, no baseline). The cases load the plugin's dependencies by relative path, so run them from a checkout of this repository at the tag, with the repository root as the target:
+
+   ```bash
+   git clone https://github.com/Svyat90/dev-digest-ai-marketplace /tmp/ddm-stable
+   cd /tmp/ddm-stable && git switch --detach sdd-engineering--v1.0.0
+   claude plugin eval . --eval-dir plugins/sdd-engineering/evals \
+     --case agents-are-namespaced --runs 1 --ablation none --max-cost-usd 2 --no-publish
+   ```
+
+   A score of 1.00 means the agents of the plugin and its three dependencies load under their namespaces at that tag. Then, in the project, a short manual check: dispatch `sdd-engineering:spec-creator` on a small brief.
+
+To go back to `main` later: remove the pinned marketplace and add `Svyat90/dev-digest-ai-marketplace` again, then `plugin update`.
+
+**What a rollback does not touch.** These plugins keep no data of their own: no `userConfig` and nothing in their `${CLAUDE_PLUGIN_DATA}` directory. Check it with:
+
+```bash
+claude plugin list --json --data-size
+```
+
+A plugin with saved data would report its data directory size there; ours report none. Everything the workflow produces — `specs/`, `docs/plans/`, `docs/retros/`, `INSIGHTS.md`, `brainstorm/ideas.md`, commits — lives in the user's repository, so switching plugin versions neither deletes nor rewrites it. A spec or plan written by a newer version stays as it is; if its format changed, the release notes in `CHANGELOG.md` say so.
+
 ## Scripts
 
 | Script | Purpose |
@@ -103,3 +164,5 @@ A user who needs to back out immediately, before the merge: `claude plugin disab
 | `scripts/release.mjs <plugin> <bump>` | Bump the version and release `[Unreleased]` notes |
 | `scripts/rollback.mjs <plugin> <version>` | Restore an earlier release as a new version |
 | `scripts/check-plugins.mjs --base <ref>` | Fail if a changed plugin has no new version (runs in CI) |
+| `claude plugin tag plugins/<name> [--dry-run]` | Create the `<plugin>--v<version>` tag (CI runs it after merge) |
+| `scripts/eval-report.mjs <results dir> --commit <sha>` | Eval results as a table for COST-BASELINE and RELEASE-EVIDENCE |

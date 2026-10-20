@@ -5,7 +5,8 @@
   "scripts": {
     "build:index": "node scripts/build-index.mjs",
     "i18n:todo": "node scripts/i18n-todo.mjs",
-    "check": "node scripts/check-plugins.mjs"
+    "check": "node scripts/check-plugins.mjs",
+    "eval:report": "node scripts/eval-report.mjs"
   },
   "engines": {
     "node": ">=20"

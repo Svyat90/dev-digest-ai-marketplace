@@ -150,6 +150,25 @@ What the project should provide:
   PostgreSQL. Other stacks still get the workflow; the planner loads only the
   skills that match.
 
+## Evals
+
+`evals/` holds behavioural cases for `claude plugin eval`: one directory per
+case with `prompt.md` and `graders/*.md`, plus `case.yaml` and `scaffold.sh`
+when the case needs a repository (built by `evals/_fixtures/notes-app.sh`).
+Each case loads this plugin and its three dependencies through `plugins:` in
+`prompt.md`. They are outside this plugin's directory, so run the suite with
+the marketplace root as the target:
+
+```bash
+claude plugin eval . --eval-dir plugins/sdd-engineering/evals \
+  --scaffold --allow-tools Write Edit Bash
+```
+
+The skill-level `skills/*/evals/evals.json` files are for skill-creator, which
+`claude plugin eval` does not read. Results go to `evals/results/` (ignored by git);
+`node scripts/eval-report.mjs <results dir>` turns one into the table in
+`docs/COST-BASELINE.md`.
+
 ## Versions
 
 Release notes: [CHANGELOG.md](CHANGELOG.md). Requirements (Claude Code `>=2.1.110`, Node.js 18): [COMPATIBILITY.md](COMPATIBILITY.md). Dependency versions:

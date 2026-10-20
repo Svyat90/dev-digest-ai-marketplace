@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: spec-creator-no-approval-with-open-questions
+context:
+  scaffold_script: scaffold.sh

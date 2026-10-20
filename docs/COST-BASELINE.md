@@ -56,3 +56,27 @@ It writes the site data to `site/public/` and prints the table above to stdout
 (progress goes to stderr, so `npm run --silent build:index -- --cost > table.md`
 captures only the table). Paste it above, add the **Total** row, update the date.
 CI appends the same table to the summary of every `validate` run.
+
+## Behavioural evals
+
+Context cost says what a plugin costs while idle; evals say what it costs and how
+reliably it works when used. The suite of `sdd-engineering` lives in
+`plugins/sdd-engineering/evals/` (see its README). After a full run, turn the
+result into a table row:
+
+```bash
+npm run --silent eval:report -- plugins/sdd-engineering/evals/results/<timestamp> --commit "$(git rev-parse --short HEAD)"
+```
+
+The script reads only `aggregate-result.json`. Fields the JSON does not record
+(Claude Code 2.1.304 writes no token counts, and the model only when `--model`
+is passed) print as *not recorded*; the commit comes from `--commit`, because
+the JSON has none. *Calls* counts agent runs; *Critical errors* counts runs that
+ended with an error or were aborted.
+
+| Plugin | Commit | Model | Tokens | Calls | Median cost / run | Median time / run | Pass rate | Critical errors |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| sdd-engineering 1.0.0 | — | — | — | — | — | — | — | — |
+
+*Not run yet for 1.0.0.* Replace the row with the output of `eval:report` after
+the first full run and record the run in [RELEASE-EVIDENCE.md](RELEASE-EVIDENCE.md).

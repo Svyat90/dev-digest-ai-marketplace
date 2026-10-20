@@ -79,7 +79,8 @@ site/                             catalog site: React + Vite app (GitHub Pages),
 - [CONTRIBUTING.md](CONTRIBUTING.md) — add or change a plugin, PR checklist
 - [docs/PLUGIN-GUIDELINES.md](docs/PLUGIN-GUIDELINES.md) — plugin structure, manifest, dependencies
 - [docs/SECURITY.md](docs/SECURITY.md) — permissions, secrets, script review, incidents
-- [docs/RELEASES.md](docs/RELEASES.md) — SemVer, tags, updates, channels, rollback
+- [docs/RELEASES.md](docs/RELEASES.md) — SemVer, tags, install in a project, updates, channels, rollback
+- [docs/RELEASE-EVIDENCE.md](docs/RELEASE-EVIDENCE.md) — record of each release: version, tag, SHA, eval results
 - [docs/SITE-SPEC.md](docs/SITE-SPEC.md) — catalog site specification
 - [docs/COST-BASELINE.md](docs/COST-BASELINE.md) — context cost of each plugin
 

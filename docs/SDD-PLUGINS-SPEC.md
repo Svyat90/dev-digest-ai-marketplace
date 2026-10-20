@@ -95,6 +95,7 @@ plugins/
     ├── scripts/               spec-creator-scope.mjs spec-creator-lint.mjs lint-spec.mjs
     │                          implementation-planner-scope.mjs implementation-planner-lint.mjs
     │                          lib/project.mjs (package and spec-folder conventions)
+    ├── evals/                 behavioural cases for `claude plugin eval` (prompt.md + graders/*.md)
     ├── README.md              how the workflow fits together
     ├── CHANGELOG.md           releases
     └── COMPATIBILITY.md       Claude Code >=2.1.110 and the features relied on
