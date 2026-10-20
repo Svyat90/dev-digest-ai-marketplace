@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-// Builds site/plugins.json — the catalog the static site renders.
+// Builds site/artifact-search/plugins.json — the index the Artifact Search site renders.
+// Schema: docs/SITE-SPEC.md → Data contract.
 //
-//   node scripts/build-index.mjs           write site/plugins.json
+//   node scripts/build-index.mjs           write site/artifact-search/plugins.json
 //   node scripts/build-index.mjs --cost    also print the COST-BASELINE table to stdout
 
 import { writeFileSync, mkdirSync } from 'node:fs';
@@ -12,6 +13,8 @@ import {
 } from './lib/plugins.mjs';
 
 const marketplace = loadMarketplace();
+const REPOSITORY = 'https://github.com/Svyat90/dev-digest-ai-marketplace';
+const OUT_DIR = join(ROOT, 'site', 'artifact-search');
 
 function gitSha() {
   try {
@@ -30,10 +33,12 @@ const plugins = marketplace.plugins.map((entry) => {
     name: c.data?.name ?? null,
     description: c.data?.description ?? null,
     path: rel(c.file),
+    text: c.body.trim(),
     // Description is always in context while the plugin is enabled; body loads on invoke.
+    // Hooks run in the harness and never enter the model context.
     tokens: {
       idle: estimateTokens(c.data?.description),
-      invoked: estimateTokens(c.body),
+      invoked: c.type === 'hook' ? 0 : estimateTokens(c.body),
     },
   }));
   return {
@@ -58,13 +63,14 @@ const index = {
   marketplace: marketplace.name,
   description: marketplace.description,
   addCommand: '/plugin marketplace add Svyat90/dev-digest-ai-marketplace',
+  repository: REPOSITORY,
   commit: gitSha(),
   plugins,
 };
 
-mkdirSync(join(ROOT, 'site'), { recursive: true });
-writeFileSync(join(ROOT, 'site', 'plugins.json'), JSON.stringify(index, null, 2) + '\n');
-console.error(`site/plugins.json: ${plugins.length} plugins`);
+mkdirSync(OUT_DIR, { recursive: true });
+writeFileSync(join(OUT_DIR, 'plugins.json'), JSON.stringify(index, null, 2) + '\n');
+console.error(`${rel(join(OUT_DIR, 'plugins.json'))}: ${plugins.length} plugins`);
 
 if (process.argv.includes('--cost')) {
   const rows = plugins.map((p) =>
