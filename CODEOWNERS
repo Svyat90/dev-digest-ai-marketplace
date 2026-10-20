@@ -1,0 +1,22 @@
+# Who approves changes. The last matching pattern wins.
+# Single owner for now; add teammates here as plugins gain dedicated owners.
+
+*                                   @Svyat90
+
+# Catalog, CI, scripts and security rules
+/.claude-plugin/                    @Svyat90
+/.github/                           @Svyat90
+/scripts/                           @Svyat90
+/docs/SECURITY.md                   @Svyat90
+/CODEOWNERS                         @Svyat90
+
+# Plugins
+/plugins/architecture-review/       @Svyat90
+/plugins/engineering-paved-path/    @Svyat90
+/plugins/research-tools/            @Svyat90
+/plugins/sdd-engineering/           @Svyat90
+
+# Hooks, MCP servers and scripts of any plugin execute code — always reviewed by the platform owner
+/plugins/*/hooks/                   @Svyat90
+/plugins/*/scripts/                 @Svyat90
+/plugins/*/.mcp.json                @Svyat90

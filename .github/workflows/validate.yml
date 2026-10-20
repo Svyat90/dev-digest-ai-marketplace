@@ -1,0 +1,88 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pin the CLI so a new Claude Code release cannot change validation results unannounced.
+  # Bump deliberately in a dedicated PR.
+  CLAUDE_CODE_VERSION: "2.1.304"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Claude Code CLI
+        run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+
+      - name: Validate marketplace
+        run: claude plugin validate . --strict
+
+      - name: Validate each plugin
+        run: |
+          for dir in plugins/*/; do
+            echo "::group::$dir"
+            claude plugin validate "$dir" --strict
+            echo "::endgroup::"
+          done
+
+      - name: Team checks
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            node scripts/check-plugins.mjs --base "origin/${{ github.base_ref }}"
+          else
+            node scripts/check-plugins.mjs
+          fi
+
+      - name: Syntax-check scripts
+        run: |
+          for f in $(git ls-files '*.mjs' '*.js'); do node --check "$f"; done
+
+      - name: Build site index
+        run: node scripts/build-index.mjs --cost >> "$GITHUB_STEP_SUMMARY"
+
+  tag:
+    # After merge to main, create a <plugin>--v<version> tag for every version that has none yet.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create missing release tags
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for manifest in plugins/*/.claude-plugin/plugin.json; do
+            name=$(node -p "require('./$manifest').name")
+            version=$(node -p "require('./$manifest').version")
+            tag="${name}--v${version}"
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              continue
+            fi
+            git tag -a "$tag" -m "$name $version"
+            echo "Created $tag"
+            created=1
+          done
+          if [ -n "$created" ]; then git push origin --tags; fi

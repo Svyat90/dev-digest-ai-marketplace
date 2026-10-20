@@ -1,0 +1,18 @@
+{
+  "name": "architecture-review",
+  "displayName": "Architecture Review",
+  "version": "0.1.0",
+  "description": "Review architecture decisions and ADRs with a reviewer agent and a team checklist",
+  "author": {
+    "name": "DevDigest AI Platform",
+    "url": "https://github.com/Svyat90"
+  },
+  "homepage": "https://github.com/Svyat90/dev-digest-ai-marketplace/tree/main/plugins/architecture-review",
+  "repository": "https://github.com/Svyat90/dev-digest-ai-marketplace",
+  "license": "UNLICENSED",
+  "keywords": [
+    "architecture",
+    "adr",
+    "review"
+  ]
+}

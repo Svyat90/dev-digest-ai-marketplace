@@ -1,0 +1,39 @@
+{
+  "name": "dev-digest-ai-marketplace",
+  "description": "DevDigest team harness: Claude Code skills, agents and hooks for everyday engineering work",
+  "owner": {
+    "name": "DevDigest AI Platform",
+    "url": "https://github.com/Svyat90/dev-digest-ai-marketplace"
+  },
+  "plugins": [
+    {
+      "name": "architecture-review",
+      "source": "./plugins/architecture-review",
+      "description": "Review architecture decisions and ADRs with a reviewer agent and a team checklist",
+      "category": "review",
+      "tags": ["architecture", "adr", "review"]
+    },
+    {
+      "name": "engineering-paved-path",
+      "source": "./plugins/engineering-paved-path",
+      "description": "The team paved path: code, commit and pull request conventions",
+      "category": "engineering",
+      "tags": ["conventions", "git", "pull-request"]
+    },
+    {
+      "name": "research-tools",
+      "source": "./plugins/research-tools",
+      "description": "Structured technical research with cited sources and a recommendation",
+      "category": "research",
+      "tags": ["research", "spike", "sources"]
+    },
+    {
+      "name": "sdd-engineering",
+      "source": "./plugins/sdd-engineering",
+      "description": "Spec-driven development: from specification to plan and tasks",
+      "category": "engineering",
+      "tags": ["spec", "planning", "sdd"]
+    }
+  ],
+  "renames": {}
+}
