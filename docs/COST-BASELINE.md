@@ -76,7 +76,11 @@ ended with an error or were aborted.
 
 | Plugin | Commit | Model | Tokens | Calls | Median cost / run | Median time / run | Pass rate | Critical errors |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| sdd-engineering 1.0.0 | — | — | — | — | — | — | — | — |
+| sdd-engineering 1.0.0 | 69a842b | claude-sonnet-5-5 | not recorded | 24 runs (12 with plugin) | $0.06 | 7 s | 100% · 4/4 cases | 0 |
 
-*Not run yet for 1.0.0.* Replace the row with the output of `eval:report` after
-the first full run and record the run in [RELEASE-EVIDENCE.md](RELEASE-EVIDENCE.md).
+*Smoke + negative only* (2026-10-22, `--tag smoke negative --runs 3`, baseline
+arm on, total $2.85, 575 s): 4 of 15 cases, so not a full release baseline. All
+12 runs with the plugin scored 1.00; mean Δ over the no-plugin arm +0.35. The
+model column is filled by hand: the JSON does not record `--model`. Details and
+the fixes that got here are in [RELEASE-EVIDENCE.md](RELEASE-EVIDENCE.md).
+Replace the row with the output of `eval:report` after the first full run.
