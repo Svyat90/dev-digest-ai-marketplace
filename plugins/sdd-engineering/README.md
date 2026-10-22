@@ -109,6 +109,7 @@ agent and ignores every other tool call of the session:
 | Hook | Agent | Does |
 |---|---|---|
 | `spec-creator-scope.mjs` (PreToolUse) | spec-creator | allows writes only to spec files, their index and `<pkg>/CLAUDE.md` › *Read when*; a read-only Bash allow-list; asks you before any `Status:` change |
+| `spec-writer-guard.mjs` (PreToolUse) | everyone except spec-creator | blocks writing a new spec file into a spec folder and tells Claude to dispatch `sdd-engineering:spec-creator` instead; edits, existing files and `README.md` pass |
 | `spec-creator-lint.mjs` (PostToolUse) | spec-creator | lints each spec after a write and sends errors back to the agent |
 | `implementation-planner-scope.mjs` (PreToolUse) | implementation-planner | allows writing only `docs/plans/<date>-<topic>.md`, and only a new or `draft` plan |
 | `implementation-planner-lint.mjs` (PostToolUse) | implementation-planner | lints each plan after a write |
@@ -163,6 +164,10 @@ the marketplace root as the target:
 claude plugin eval . --eval-dir plugins/sdd-engineering/evals \
   --scaffold --allow-tools Write Edit Bash
 ```
+
+Add `--tag smoke negative` for the quick set (4 cases). Keep `--scaffold` and
+the tool grant there too: `spec-creator-asks-clarifications` needs a repository
+and Write, and scores 0 without them.
 
 The skill-level `skills/*/evals/evals.json` files are for skill-creator, which
 `claude plugin eval` does not read. Results go to `evals/results/` (ignored by git);
