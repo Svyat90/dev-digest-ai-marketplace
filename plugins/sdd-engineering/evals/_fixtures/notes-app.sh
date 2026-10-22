@@ -60,6 +60,8 @@ JS
   cat > specs/README.md <<'MD'
 # Specs
 
+## Index
+
 | # | Spec | Status |
 |---|---|---|
 MD

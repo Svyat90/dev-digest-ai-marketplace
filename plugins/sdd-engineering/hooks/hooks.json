@@ -1,7 +1,13 @@
 {
-  "description": "Scope and lint guards for the spec-creator and implementation-planner agents. Each script acts only inside its own agent.",
+  "description": "Scope and lint guards for the spec-creator and implementation-planner agents, each acting only inside its own agent, plus a guard that sends new specs through spec-creator.",
   "hooks": {
     "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/spec-writer-guard.mjs", "timeout": 10 }
+        ]
+      },
       {
         "matcher": "Write|Edit|Bash",
         "hooks": [
