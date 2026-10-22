@@ -46,8 +46,9 @@ claude plugin marketplace add ./      # local marketplace: edits apply without a
 claude plugin validate . --strict                        # marketplace
 for d in plugins/*/; do claude plugin validate "$d" --strict; done
 node scripts/check-plugins.mjs --base origin/main         # team rules + version bump
-node scripts/build-index.mjs --cost                       # site index + context cost
-node scripts/test-site-search.mjs                         # canonical site search queries
+npm run build:index -- --cost                             # site data in site/public/ + context cost
+(cd site && npm ci && npm test)                           # catalog search acceptance, data, locale keys
+npm run i18n:todo -- uk                                   # descriptions whose Ukrainian translation is missing or stale
 ```
 
 Then check by hand:

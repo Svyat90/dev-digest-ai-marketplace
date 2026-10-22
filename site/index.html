@@ -3,15 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>DevDigest AI Marketplace</title>
-  <meta http-equiv="refresh" content="0; url=artifact-search/">
-  <link rel="canonical" href="artifact-search/">
-  <style>
-    body { margin: 0; padding: 40px 16px; font: 16px/1.5 system-ui, sans-serif; background: #fbfaf8; color: #2b2724; }
-    @media (prefers-color-scheme: dark) { body { background: #1c1a19; color: #f1efec; } a { color: #9db4ff; } }
-  </style>
+  <meta name="description" content="Catalog of the DevDigest Claude Code plugins: skills, agents and hooks with install commands.">
+  <script>
+    // Apply the remembered theme before first paint (no flash).
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
 </head>
 <body>
-  <p>Redirecting to <a href="artifact-search/">Artifact Search</a>…</p>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

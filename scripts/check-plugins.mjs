@@ -9,7 +9,7 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { execSync } from 'node:child_process';
 import {
-  ROOT, loadMarketplace, loadManifest, pluginDir, listComponents, walk, rel,
+  ROOT, loadMarketplace, loadManifest, pluginDir, listComponents, strayMarkdown, walk, rel,
 } from './lib/plugins.mjs';
 
 const errors = [];
@@ -17,6 +17,9 @@ const warnings = [];
 const error = (msg) => errors.push(msg);
 const warn = (msg) => warnings.push(msg);
 
+// Component keys that move components out of their default locations. The catalog
+// (build-index.mjs) indexes only the defaults, so these would vanish from the site.
+const CUSTOM_COMPONENT_KEYS = ['skills', 'commands', 'agents', 'hooks', 'mcpServers', 'lspServers', 'outputStyles', 'workflows'];
 const SEMVER = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/;
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MAX_FILE_BYTES = 1024 * 1024;
@@ -122,6 +125,13 @@ for (const entry of marketplace.plugins) {
   }
   if (existsSync(join(dir, 'CLAUDE.md'))) {
     error(`${where}: CLAUDE.md is not loaded from plugins — put instructions in a skill`);
+  }
+
+  for (const key of CUSTOM_COMPONENT_KEYS.filter((k) => k in manifest)) {
+    error(`${where}: plugin.json "${key}" moves components out of their default location — use the default folder (skills/, agents/, hooks/hooks.json, .mcp.json, …) so the catalog lists them`);
+  }
+  for (const file of strayMarkdown(dir)) {
+    warn(`${rel(file)}: no frontmatter — Claude Code does not load it as a component and the catalog skips it`);
   }
 
   const components = listComponents(dir);

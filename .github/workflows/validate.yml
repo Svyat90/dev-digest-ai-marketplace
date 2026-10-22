@@ -28,6 +28,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
 
       - name: Install Claude Code CLI
         run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
@@ -53,16 +55,30 @@ jobs:
 
       - name: Syntax-check scripts
         run: |
-          for f in $(git ls-files '*.mjs' '*.js'); do node --check "$f"; done
+          for f in $(git ls-files 'scripts/*.mjs' 'plugins/*.mjs' 'plugins/*.js'); do node --check "$f"; done
 
       - name: Build site index
         run: node scripts/build-index.mjs --cost >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Site search acceptance test
-        run: node scripts/test-site-search.mjs
+      - name: Content translations report
+        # Informational: missing or stale translations never fail the build.
+        run: node scripts/i18n-todo.mjs uk >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Site tests (search acceptance, data, locales)
+        working-directory: site
+        run: npm test
+
+      - name: Site build
+        working-directory: site
+        run: npm run build
 
   tag:
-    # After merge to main, create a <plugin>--v<version> tag for every version that has none yet.
+    # After merge to main, tag every plugin version that has no <plugin>--v<version> tag yet.
+    # `claude plugin tag` checks that plugin.json and the marketplace entry agree.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: validate
     runs-on: ubuntu-latest
@@ -73,19 +89,24 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Claude Code CLI
+        run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+
       - name: Create missing release tags
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for manifest in plugins/*/.claude-plugin/plugin.json; do
-            name=$(node -p "require('./$manifest').name")
-            version=$(node -p "require('./$manifest').version")
-            tag="${name}--v${version}"
-            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+          for dir in plugins/*/; do
+            name=$(node -p "require('./${dir}.claude-plugin/plugin.json').name")
+            version=$(node -p "require('./${dir}.claude-plugin/plugin.json').version")
+            if git rev-parse -q --verify "refs/tags/${name}--v${version}" >/dev/null; then
+              echo "${name}--v${version} exists"
               continue
             fi
-            git tag -a "$tag" -m "$name $version"
-            echo "Created $tag"
-            created=1
+            claude plugin tag "$dir" --message "${name} %s" --push
+            echo "- created \`${name}--v${version}\` at \`$(git rev-parse --short HEAD)\`" >> "$GITHUB_STEP_SUMMARY"
           done
-          if [ -n "$created" ]; then git push origin --tags; fi

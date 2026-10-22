@@ -1,8 +1,8 @@
 {
   "name": "architecture-review",
   "displayName": "Architecture Review",
-  "version": "0.1.0",
-  "description": "Review architecture decisions and ADRs with a reviewer agent and a team checklist",
+  "version": "1.0.0",
+  "description": "Read-only architecture review of a change: onion rings, import direction, domain purity and the client/server boundary",
   "author": {
     "name": "DevDigest AI Platform",
     "url": "https://github.com/Svyat90"
@@ -12,7 +12,13 @@
   "license": "UNLICENSED",
   "keywords": [
     "architecture",
-    "adr",
-    "review"
+    "review",
+    "onion"
+  ],
+  "dependencies": [
+    {
+      "name": "engineering-paved-path",
+      "version": "^1.0.0"
+    }
   ]
 }

@@ -25,22 +25,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: "last updated" is the date of the last commit touching each plugin.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
 
-      - name: Build plugins.json
+      - name: Build site index
         run: node scripts/build-index.mjs
 
-      - name: Site search acceptance test
-        run: node scripts/test-site-search.mjs
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Site tests
+        working-directory: site
+        run: npm test
+
+      - name: Site build
+        working-directory: site
+        run: npm run build
 
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: site/dist
 
   deploy:
     needs: build

@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: spec-creator-revises-with-answers
+context:
+  scaffold_script: scaffold.sh

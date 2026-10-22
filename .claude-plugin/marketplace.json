@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "dev-digest-ai-marketplace",
   "description": "DevDigest team harness: Claude Code skills, agents and hooks for everyday engineering work",
   "owner": {
@@ -9,30 +10,30 @@
     {
       "name": "architecture-review",
       "source": "./plugins/architecture-review",
-      "description": "Review architecture decisions and ADRs with a reviewer agent and a team checklist",
+      "description": "Read-only architecture review of a change (onion rings, import direction, client/server boundary)",
       "category": "review",
-      "tags": ["architecture", "adr", "review"]
+      "tags": ["architecture", "review", "onion"]
     },
     {
       "name": "engineering-paved-path",
       "source": "./plugins/engineering-paved-path",
-      "description": "The team paved path: code, commit and pull request conventions",
+      "description": "Shared engineering skills: React, Next.js, Fastify, Drizzle, PostgreSQL, Zod, TypeScript, architecture, security, and a pre-PR self-review",
       "category": "engineering",
-      "tags": ["conventions", "git", "pull-request"]
+      "tags": ["conventions", "react", "fastify", "drizzle", "security", "review", "pull-request"]
     },
     {
       "name": "research-tools",
       "source": "./plugins/research-tools",
-      "description": "Structured technical research with cited sources and a recommendation",
+      "description": "Read-only researcher agent for the codebase and the web: a structured report with cited sources and what was not found",
       "category": "research",
-      "tags": ["research", "spike", "sources"]
+      "tags": ["research", "spike", "sources", "agent"]
     },
     {
       "name": "sdd-engineering",
       "source": "./plugins/sdd-engineering",
-      "description": "Spec-driven development: from specification to plan and tasks",
+      "description": "Spec-driven development workflow: spec, plan, parallel implementation, verification and retro with four agents",
       "category": "engineering",
-      "tags": ["spec", "planning", "sdd"]
+      "tags": ["spec", "planning", "sdd", "agents", "workflow"]
     }
   ],
   "renames": {}
