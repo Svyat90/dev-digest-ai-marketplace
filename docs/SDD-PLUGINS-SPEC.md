@@ -91,9 +91,10 @@ plugins/
     │   ├── run-plan/          SKILL.md, references/ (incl. plan-template.md), evals/, scripts/lint-plan.mjs
     │   ├── workflow-retro/    SKILL.md, references/ (metrics, prices.json, report-template), scripts/collect.mjs
     │   └── engineering-insights/ brainstorm/ mermaid-diagram/
-    ├── hooks/hooks.json       scope and lint guards for spec-creator and implementation-planner
+    ├── hooks/hooks.json       scope and lint guards for spec-creator and implementation-planner, spec-writer guard
     ├── scripts/               spec-creator-scope.mjs spec-creator-lint.mjs lint-spec.mjs
     │                          implementation-planner-scope.mjs implementation-planner-lint.mjs
+    │                          spec-writer-guard.mjs
     │                          lib/project.mjs (package and spec-folder conventions)
     ├── evals/                 behavioural cases for `claude plugin eval` (prompt.md + graders/*.md)
     ├── README.md              how the workflow fits together

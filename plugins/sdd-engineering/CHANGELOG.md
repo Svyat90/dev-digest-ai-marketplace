@@ -5,6 +5,16 @@ Release tag: `sdd-engineering--v<version>` (see [docs/RELEASES.md](../../docs/RE
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-10-22
+
+### Added
+- `spec-writer-guard` hook: a new spec file can only be written by `spec-creator`; anywhere else Claude is told to dispatch the agent. In 1.0.0 the main session often wrote the spec itself, without the gap analysis and open questions.
+
+### Changed
+- `spec-creator` description leads with when to dispatch it and says never to write `specs/` files directly (1004 → 632 characters; idle cost of the plugin ~1301 → ~1208 tokens).
+- `spec-creator` report asks the caller to keep the `[OQn]` ids when it relays the questions.
+- Evals: `open-questions-returned` also accepts an "Open questions" heading followed by a list; the fixture's `specs/README.md` has the `## Index` heading that `spec-creator-scope` expects.
+
 ## [1.0.0] — 2026-10-19
 
 ### Added

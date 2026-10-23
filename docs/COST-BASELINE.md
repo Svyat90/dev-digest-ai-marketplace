@@ -44,6 +44,47 @@ a plugin nears its limit. Hooks and skills with `disable-model-invocation`
 
 CI adds the current table to the summary of every `validate` run.
 
+## Optimization: sdd-engineering 1.1.0
+
+The `spec-creator` description was the largest in the marketplace (~250 tokens)
+and put its trigger last; in 1.0.0 the main session often wrote specs itself.
+1.1.0 rewrites it trigger-first (1004 → 632 characters) and adds the
+`spec-writer-guard` hook, which costs nothing idle.
+
+| Plugin | Version | Components | Idle tokens | Invoked tokens (all) |
+| --- | --- | --- | --- | --- |
+| sdd-engineering | 1.0.0 | 11 | ~1301 | ~23119 |
+| sdd-engineering | 1.1.0 | 11 | ~1208 | ~23144 |
+| **Total, all plugins** | 1.1.0 | **28** | **~2910** (−93) | **~58765** |
+
+Cost per successful workflow, case `spec-creator-asks-clarifications` (brief →
+dispatched `spec-creator` → draft spec → open questions back to the user),
+3 runs with the plugin, `claude-sonnet-5-5`:
+
+| Version | Successful runs | Total cost | Cost per successful workflow | Median time / run |
+| --- | --- | --- | --- | --- |
+| 1.0.0 | 1 of 3 | $0.86 | **$0.86** | 28 s |
+| 1.1.0 | 3 of 3 | $1.71 | **$0.57** (−34%) | 143 s |
+
+A single run costs more in 1.1.0 because the agent now does the full gap
+analysis every time; the failed 1.0.0 runs were cheap and useless. Results:
+`evals/results/2026-10-22T03-53-42-856Z` (1.0.0) and
+`2026-10-22T04-49-24-582Z` (1.1.0).
+
+## Quality gate
+
+A plugin version is releasable when, on the pinned model:
+
+- `check-plugins` and `claude plugin validate --strict` pass (CI `validate`);
+- idle cost stays within the budget above;
+- the smoke + negative evals (`--tag smoke negative --runs 3`, with the
+  baseline arm) score 1.00 in every run with the plugin, with no critical errors;
+- cost per successful workflow does not grow by more than 20% over the
+  previous release without a reason in the PR.
+
+1.1.0 meets all four (table below); 1.0.0 failed the eval gate
+(`spec-creator-asks-clarifications` 0.56), which is why 1.1.0 exists.
+
 ## How to update
 
 From the repository root:
@@ -69,14 +110,19 @@ npm run --silent eval:report -- plugins/sdd-engineering/evals/results/<timestamp
 ```
 
 The script reads only `aggregate-result.json`. Fields the JSON does not record
-(Claude Code 2.1.304 writes no token counts, and the model only when `--model`
-is passed) print as *not recorded*; the commit comes from `--commit`, because
+(Claude Code 2.1.308 writes neither token counts nor the model, even with
+`--model`) print as *not recorded*; the commit comes from `--commit`, because
 the JSON has none. *Calls* counts agent runs; *Critical errors* counts runs that
 ended with an error or were aborted.
 
 | Plugin | Commit | Model | Tokens | Calls | Median cost / run | Median time / run | Pass rate | Critical errors |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| sdd-engineering 1.0.0 | — | — | — | — | — | — | — | — |
+| sdd-engineering 1.0.0 | 6bce099 | claude-sonnet-5-5 | not recorded | 8 runs (4 with plugin) | $0.06 | 6 s | 75% · 3/4 cases | 0 |
+| sdd-engineering 1.1.0 | ebb22fc | claude-sonnet-5-5 | not recorded | 24 runs (12 with plugin) | $0.06 | 7 s | 100% · 4/4 cases | 0 |
 
-*Not run yet for 1.0.0.* Replace the row with the output of `eval:report` after
-the first full run and record the run in [RELEASE-EVIDENCE.md](RELEASE-EVIDENCE.md).
+*Smoke + negative only* (2026-10-22): 4 of 15 cases, so not a full release
+baseline. 1.0.0: one run per case (`spec-creator-asks-clarifications` failed).
+1.1.0: three runs per case, baseline arm on, total $2.85, 575 s, mean Δ +0.35.
+The model column is filled by hand. Details are in
+[RELEASE-EVIDENCE.md](RELEASE-EVIDENCE.md); add rows from `eval:report` after
+each full run.

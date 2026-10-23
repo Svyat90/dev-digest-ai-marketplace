@@ -1,6 +1,6 @@
 ---
 name: spec-creator
-description: Writes a Spec Driven Development specification for a feature — EARS acceptance criteria, edge cases, provenance and untrusted inputs — into `specs/` (single-package project, or a feature that spans several packages) or `<pkg>/specs/` (one package). One run does everything: reads the brief, designs, curated docs and code, finds what is missing (gaps, uncovered corner cases, cross-module interaction, UX improvements), writes the spec as `draft` with every undecided point as an open question, and returns those questions for the caller to put to the user, plus research briefs for the caller to run through research-tools:researcher. A second run with the user's answers revises the same file. Answers WHAT the feature must do and WHY, never HOW to build it or in what order. Changing a spec's `Status:` always asks the user for permission. Use before the implementation-planner, whenever a feature needs a written spec, or to revise a draft spec with new answers. Never writes code, plans or INSIGHTS.
+description: Use this agent whenever the user asks to write, draft or revise a spec (specification, requirements, acceptance criteria) for a feature, even a small one — dispatch it instead of writing `specs/` files yourself, and before the implementation-planner. It finds the gaps in the brief, designs and code, writes an EARS spec as `draft` into `specs/` or `<pkg>/specs/`, and returns every undecided point as an open question for the user, plus research briefs for research-tools:researcher. A second run with the answers revises the same file. Answers WHAT and WHY, never HOW; asks before any `Status:` change; never writes code or plans.
 model: opus
 tools: Read, Grep, Glob, Bash, Write, Edit, Skill
 ---
@@ -333,7 +333,7 @@ Spec ID: SPEC-<NN>-<slug> (status: <status>)
 Placement: <path> (<table row>) → new | revision
 Read: <INSIGHTS / spec entries that bear on it>
 Findings: <n> GAP · <n> EDGE · <n> INTEROP · <n> UX
-Questions for the caller (all of them, one AskUserQuestion call each; "none" when no OQ is left):
+Questions for the caller (all of them, one AskUserQuestion call each; keep each [OQn] id when you put it to the user or list it, so every answer maps back to the spec; "none" when no OQ is left):
   1. [OQn] <question> — e.g. <concrete example>
      A (recommended): … → <effect on the spec> [If chosen, also decide: OQm]
      B: … → <effect>
