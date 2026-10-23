@@ -50,12 +50,29 @@ Decision: shipped | rolled back to <tag> (see RELEASES.md › Return a project t
 
 ## Entries
 
-### sdd-engineering 1.1.0 — pending
+### sdd-engineering 1.1.0 — 2026-10-22
 
-Not tagged yet: fill in tag and SHA after the merge of the 1.1.0 PR, then
-repeat the smoke run at the tag.
+| Field | Value |
+| --- | --- |
+| Version | `1.1.0` (plugin.json) |
+| Tag | `sdd-engineering--v1.1.0` |
+| Commit SHA | `7ab354263b35d0dcdabdd0687438ff0edaee363f` |
+| PR | #5 (replaces #4, closed unmerged) |
 
-Pre-merge smoke run, 2026-10-22 (4 of 15 cases):
+Smoke at the tag, 2026-10-22, Claude Code `2.1.309`, from a checkout of the tag:
+`claude plugin eval . --eval-dir plugins/sdd-engineering/evals --tag smoke negative --runs 1 --ablation none --scaffold --allow-tools Write Edit Bash --model claude-sonnet-5-5 --no-publish`
+(report `plugins/sdd-engineering/evals/results/2026-10-23T01-49-05-678Z/report.html`, local):
+
+| Case | Score | Cost |
+| --- | --- | --- |
+| agents-are-namespaced | 1.00 | $0.09 |
+| spec-creator-asks-clarifications | 1.00 | $0.69 |
+| unrelated-request-stays-out-of-sdd | 1.00 | $0.06 |
+| workflow-retro-needs-explicit-request | 1.00 | $0.07 |
+
+4/4 cases, $0.90, 173 s. Decision: shipped.
+
+Pre-merge smoke run, 2026-10-22 (4 of 15 cases, 3 runs each, with the baseline arm):
 
 | Field | Value |
 | --- | --- |
