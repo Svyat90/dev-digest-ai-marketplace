@@ -1,0 +1,52 @@
+{
+  "slug": "ddm-l08-release",
+  "projectRoot": "../..",
+  "output": "demo/l08-release/l08-release.mp4",
+  "order": [
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5",
+    "s6",
+    "s7"
+  ],
+  "surfaces": [
+    "browser",
+    "terminal"
+  ],
+  "healthUrls": [
+    "https://svyat90.github.io/dev-digest-ai-marketplace/",
+    "https://github.com/Svyat90/dev-digest-ai-marketplace"
+  ],
+  "video": {
+    "fps": 30,
+    "zoom": 1.25,
+    "display": "2560x1440"
+  },
+  "tts": {
+    "provider": "elevenlabs",
+    "voiceId": "onwK4e9ZLuTAKqWW03F9",
+    "voiceName": "Daniel",
+    "language": "uk",
+    "model": "eleven_multilingual_v2",
+    "keychainService": "elevenlabs-api",
+    "charsPerSecond": 14
+  },
+  "terminal": {
+    "fontSize": 18
+  },
+  "web": {
+    "baseUrl": "https://svyat90.github.io/dev-digest-ai-marketplace/"
+  },
+  "neverClick": [
+    "Merge pull request",
+    "Close pull request",
+    "Delete",
+    "Settings",
+    "Edit",
+    "Sync fork",
+    "Create release",
+    "Run workflow"
+  ]
+}
