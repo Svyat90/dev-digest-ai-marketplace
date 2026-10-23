@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n';
 import { useCatalog, useUi } from '../context';
 import { loadBody } from '../lib/data';
 import { renderInline, renderMarkdown } from '../lib/markdown';
+import { renderDiagrams } from '../lib/mermaid';
 import { href } from '../lib/route';
 import { localized, type Entry } from '../lib/search';
 import type { EntryType } from '../lib/types';
@@ -79,11 +80,16 @@ export function MarkdownBody({ file, path, plain = false }: { file: string; path
       : ''),
     [state.text, plain, index.repository, index.commit, path],
   );
+  const body = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (html && body.current) renderDiagrams(body.current).catch(() => {});
+  }, [html]);
 
   if (state.error) return <p className="dim">{t('doc.error')}</p>;
   if (state.text === undefined) return <p className="faint">{t('doc.loading')}</p>;
   if (plain) return <div className="markdown"><pre><code>{state.text}</code></pre></div>;
-  return <div className="markdown" dangerouslySetInnerHTML={{ __html: html }} />;
+  return <div ref={body} className="markdown" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 export function ResultCard({ entry }: { entry: Entry }) {
