@@ -5,6 +5,16 @@ Release tag: `sdd-engineering--v<version>` (see [docs/RELEASES.md](../../docs/RE
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-10-22
+
+### Added
+- `spec-writer-guard` hook: a new spec file can only be written by `spec-creator`; anywhere else Claude is told to dispatch the agent. In 1.0.0 the main session often wrote the spec itself, without the gap analysis and open questions.
+
+### Changed
+- `spec-creator` description leads with when to dispatch it and says never to write `specs/` files directly (1004 → 632 characters; idle cost of the plugin ~1301 → ~1208 tokens).
+- `spec-creator` report asks the caller to keep the `[OQn]` ids when it relays the questions.
+- Evals: `open-questions-returned` also accepts an "Open questions" heading followed by a list; the fixture's `specs/README.md` has the `## Index` heading that `spec-creator-scope` expects.
+
 ## [1.0.0] — 2026-10-19
 
 ### Added
@@ -15,7 +25,6 @@ Release tag: `sdd-engineering--v<version>` (see [docs/RELEASES.md](../../docs/RE
 - Skills: `run-plan` (orchestrates a plan end to end with a resumable execution log), `workflow-retro` (metrics and recommendations for a finished run), `engineering-insights`, `brainstorm`, `mermaid-diagram`.
 - Behavioural evals for `claude plugin eval` in `evals/` (15 cases: spec-creator, implementation-planner, run-plan, the review gate, plan-verifier, agent namespaces, and two negative cases); they replace `evals/spec-creator.json`.
 - Plugin hooks that keep `spec-creator` and `implementation-planner` inside their write scope and lint every spec and plan they write.
-- `spec-writer-guard` hook: a new spec file can only be written by `spec-creator`; anywhere else Claude is told to dispatch the agent.
 - Dependencies on `engineering-paved-path` `^1.0.0` and `architecture-review` `^1.0.0`.
 
 ### Removed

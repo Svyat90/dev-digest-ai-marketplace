@@ -123,12 +123,12 @@
       "source": "2ce98e6b"
     },
     "sdd-engineering/hook/PreToolUse": {
-      "description": "Запобіжники меж запису й лінтингу для агентів spec-creator та implementation-planner. Кожен скрипт діє лише всередині свого агента.",
-      "source": "944bb932"
+      "description": "Запобіжники меж запису й лінтингу для агентів spec-creator та implementation-planner, кожен діє лише всередині свого агента, плюс запобіжник, який спрямовує нові специфікації через spec-creator.",
+      "source": "849b321f"
     },
     "sdd-engineering/hook/PostToolUse": {
-      "description": "Запобіжники меж запису й лінтингу для агентів spec-creator та implementation-planner. Кожен скрипт діє лише всередині свого агента.",
-      "source": "944bb932"
+      "description": "Запобіжники меж запису й лінтингу для агентів spec-creator та implementation-planner, кожен діє лише всередині свого агента, плюс запобіжник, який спрямовує нові специфікації через spec-creator.",
+      "source": "849b321f"
     }
   }
 }
